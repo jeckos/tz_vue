@@ -1,0 +1,23 @@
+.sprite {
+  background-image: url(../assets/img/spritesheet.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.sprite-checked {
+  width: 27px;
+  height: 27px;
+  background-position: -5px -5px;
+}
+
+.sprite-sort {
+  width: 12px;
+  height: 16px;
+  background-position: -5px -42px;
+}
+
+.sprite-unchecked {
+  width: 27px;
+  height: 27px;
+  background-position: -5px -68px;
+}

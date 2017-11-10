@@ -1,0 +1,33 @@
+@import "components/variables";
+/* |...\Базовые стили/..|
+
+===================================
+*/
+@import "components/normalize.css";
+@import "components/base";
+/* |...\КОНЕЦ БАЗОВЫХ СТИЛЕЙ/..|
+
+===================================
+
+   |...\СТИЛИ ДЛЯ СТРАНИЦЫ/..|*/
+@import "components/interface";
+
+@import "pages/index";
+@import "pages/clients";
+
+
+
+
+
+
+
+/* |...\КОНЕЦ ОСНОВНЫХ СТИЛЕЙ/..|
+
+===================================
+
+   |...\ПОДКЛЮЧЕНИЕ ШРИФТОВ и ИКОНОК/..|*/
+
+@import "components/mixins";
+@import "components/fonts";
+@import "components/icons";
+
