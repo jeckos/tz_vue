@@ -13,6 +13,10 @@ npm run dev
 
 # build for production with minification
 npm run build
+
+# View Demo
+https://tz-vue.herokuapp.com/
+```
 ```
 
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
