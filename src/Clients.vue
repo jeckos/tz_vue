@@ -101,7 +101,7 @@
     watch: {
       '$route' (to) {
         this.currentPage = to.query.p - 1;
-        if((to.query.p - 1)* this.itemsPerPage>this.filters.length - this.itemsPerPage){
+        if((to.query.p - 1)* this.itemsPerPage>this.filters.length - this.itemsPerPage || this.filters.length<this.itemsPerPage ){
           this.next = false
         }else {
           this.next = true
@@ -138,7 +138,8 @@
         nextP: this.$route.query.p,
         currentPage: this.$route.query.p - 1,
         itemsPerPage: 20,
-        resultCount: 0
+        resultCount: 0,
+        filtersA:[]
 
       }
     },
@@ -163,26 +164,6 @@
         });
         $this.isTrue = !$this.isTrue;
       },
-
-//      nextPage: function () {
-//        console.log(this.filters.length - this.itemsPerPage)
-//        if((this.nextP + 2 )* this.itemsPerPage==80){
-//          this.next = false
-//        }else {
-//          this.next = true
-//        }
-//        console.log('CP: ' + this.currentPage)
-//      },
-//
-//      prevPage: function () {
-//        if(this.currentPage<=1){
-//          this.prev = false
-//        }else {
-//          this.prev = true
-//        }
-//        console.log('CP: ' + this.currentPage)
-//
-//      },
 
       formatDateUTC: function (date) {
 
@@ -246,10 +227,12 @@
       totalPages: function() {
         return Math.round(this.filters.length / this.itemsPerPage)
       },
-
+      /*
+      /Фильтры
+       */
       filters:function () {
         var $this = this;
-        return this.clients.filter(function(client){
+        return this.filters = this.clients.filter(function(client){
           if($this.LocalTime){
             String(client.created_ac = $this.formatDate(new Date(client.created_at))).match($this.LocalTime);
             String(client.last_ac = $this.formatDate(new Date(client.last_active))).match($this.LocalTime)
@@ -276,9 +259,7 @@
         return this.filters.slice(index, index + this.itemsPerPage)
       },
 
-      /*
-      /Фильтры
-       */
+
 
     }
   }

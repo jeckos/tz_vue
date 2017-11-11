@@ -17,7 +17,7 @@
         <div class="user__avatar">
           <img src="http://betlikepros.de/wp-content/uploads/2016/09/b048ba4656f61319aad1e71e8a0f47b4-NEaMHVFvWpoJeh_2_b1.jpg" alt="">
         </div>
-        <a href="#">{{user}}<i class="fa fa-angle-down" aria-hidden="true"></i></a>
+        <a href="#" @click="changeName">{{user}}<i class="fa fa-angle-down" aria-hidden="true"></i></a>
       </div>
     </div>
   </header>
@@ -47,7 +47,7 @@
 export default {
   data: function () {
     return {
-      user:'Jeckos',
+      user:'Гость',
       show: false,
       home: true,
       client: false
@@ -57,6 +57,14 @@ export default {
    vueUser,
    vueClients,
    vueHome
- }
+ },
+  methods:{
+    changeName(){
+      this.user = prompt('Ваше имя')
+      if(this.user == '' || this.user == null){
+        this.user = 'Гость'
+      }
+    }
+  }
 }
 </script>
