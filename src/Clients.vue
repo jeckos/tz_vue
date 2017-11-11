@@ -81,13 +81,13 @@
       <div id="pagination">
        <div class="flex-container">
           <div class="pagination">
-            <router-link  @click="prevPage" v-if="prev"  :to="{ path: 'clients', query: { p: currentPage  }}">PreviousR</router-link>
+            <router-link   v-if="prev"  :to="{ path: 'clients', query: { p: currentPage  }}">Previous</router-link>
             <ul class="pagination__page">
               <li v-for="(pageNumber, index) in totalPages">
                 <router-link  @click="setPage(index)" :to="{ path: 'clients', query: { p: pageNumber}}">{{ pageNumber }}</router-link>
               </li>
             </ul>
-            <router-link  @click="nextPage" v-if="next" :to="{ path: 'clients', query: { p: currentPage + 2 }}">NextR</router-link>
+            <router-link  v-if="next" :to="{ path: 'clients', query: { p: currentPage + 2 }}">Next</router-link>
           </div>
         </div>
       </div>
@@ -100,21 +100,19 @@
 
     watch: {
       '$route' (to) {
-        this.currentPage = to.query.p - 1
-        console.log("setPage " + ((to.query.p - 1)* this.itemsPerPage))
-
+        this.currentPage = to.query.p - 1;
         if((to.query.p - 1)* this.itemsPerPage>this.filters.length - this.itemsPerPage){
           this.next = false
         }else {
-          this.prev = true
+          this.next = true
         }
 
         if(to.query.p<=1){
           this.prev = false
         }else {
-          this.next = true
+          this.prev = true
         }
-        console.log('CP: ' + this.currentPage)
+
 
       }
     },
@@ -147,8 +145,7 @@
     methods: {
 
       setPage: function(pageNumber) {
-        this.currentPage = pageNumber
-        console.log("setPage " + this.currentPage)
+        this.currentPage = pageNumber;
       },
       //Ф-ция сортировки по строковым полям
       sortArrayString: function (param) {
@@ -167,25 +164,25 @@
         $this.isTrue = !$this.isTrue;
       },
 
-      nextPage: function () {
-        console.log(this.filters.length - this.itemsPerPage)
-        if((this.nextP + 2 )* this.itemsPerPage>this.filters.length - this.itemsPerPage){
-          this.next = false
-        }else {
-          this.prev = true
-        }
-        console.log('CP: ' + this.currentPage)
-      },
-
-      prevPage: function () {
-        if(this.currentPage<=1){
-          this.prev = false
-        }else {
-          this.next = true
-        }
-        console.log('CP: ' + this.currentPage)
-
-      },
+//      nextPage: function () {
+//        console.log(this.filters.length - this.itemsPerPage)
+//        if((this.nextP + 2 )* this.itemsPerPage==80){
+//          this.next = false
+//        }else {
+//          this.next = true
+//        }
+//        console.log('CP: ' + this.currentPage)
+//      },
+//
+//      prevPage: function () {
+//        if(this.currentPage<=1){
+//          this.prev = false
+//        }else {
+//          this.prev = true
+//        }
+//        console.log('CP: ' + this.currentPage)
+//
+//      },
 
       formatDateUTC: function (date) {
 
@@ -235,7 +232,6 @@
 
         this.$http.post('https://galvanize-cors-proxy.herokuapp.com/https://hidden-cliffs-66273.herokuapp.com/tz-frontend/man-load').then(function (res) {
           this.clients = res.data.result;
-          console.log(this.filters)
         }, function (error) {
           throw error
         })
@@ -273,12 +269,10 @@
       paginatedUsers: function(){
 
          if (this.currentPage <= this.totalPages) {
-          this.currentPage
-          console.log("pag: " + (this.currentPage + 1))
+          this.currentPage;
         }
 
-        var index = this.currentPage * this.itemsPerPage
-        console.log("Index: " + index)
+        var index = this.currentPage * this.itemsPerPage;
         return this.filters.slice(index, index + this.itemsPerPage)
       },
 
