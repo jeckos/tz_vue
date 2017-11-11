@@ -7,7 +7,7 @@
       <div class="menu" v-if="show">
         <ul>
           <li @click="show = !show"><router-link to="/">Главная</router-link></li>
-          <li @click="show = !show"><router-link to="/clients" >Клиенты</router-link></li>
+          <li @click="show = !show"><router-link to="/clients?p=1" >Клиенты</router-link></li>
         </ul>
       </div>
     </transition>

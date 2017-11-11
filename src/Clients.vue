@@ -56,7 +56,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr v-for="client in filter">
+              <tr v-for="client in paginatedUsers">
                 <td><router-link :to="'/user/' + client.id" >{{client.id}}</router-link><i class="fa fa-indent" aria-hidden="true"></i></td>
                 <td class="avatar"><img :src="client.avatar.small" alt=""></td>
                 <td><router-link :to="'/user/' + client.id" >{{client.name}}</router-link></td>
@@ -79,13 +79,15 @@
         </div>
       </div>
       <div id="pagination">
-        <div class="flex-container">
+       <div class="flex-container">
           <div class="pagination">
-            <a href="#" class="prev" @click.prevent="prevPage" v-if="prev">Previous</a>
+            <router-link  @click="prevPage" v-if="prev"  :to="{ path: 'clients', query: { p: currentPage  }}">PreviousR</router-link>
             <ul class="pagination__page">
-              <li v-for="page in countPage"><router-link :to="{ path: 'clients', query: { p: page}}" >{{page}}</router-link></li>
+              <li v-for="(pageNumber, index) in totalPages">
+                <router-link  @click="setPage(index)" :to="{ path: 'clients', query: { p: pageNumber}}">{{ pageNumber }}</router-link>
+              </li>
             </ul>
-            <a v-bind:href="'/clients?page='" class="next" @click.prevent="nextPage" v-if="next">Next</a>
+            <router-link  @click="nextPage" v-if="next" :to="{ path: 'clients', query: { p: currentPage + 2 }}">NextR</router-link>
           </div>
         </div>
       </div>
@@ -95,6 +97,27 @@
 
 <script>
   export default {
+
+    watch: {
+      '$route' (to) {
+        this.currentPage = to.query.p - 1
+        console.log("setPage " + ((to.query.p - 1)* this.itemsPerPage))
+
+        if((to.query.p - 1)* this.itemsPerPage>this.filters.length - this.itemsPerPage){
+          this.next = false
+        }else {
+          this.prev = true
+        }
+
+        if(to.query.p<=1){
+          this.prev = false
+        }else {
+          this.next = true
+        }
+        console.log('CP: ' + this.currentPage)
+
+      }
+    },
     data: function () {
       return {
         clients:[],
@@ -112,11 +135,21 @@
         searchNew:'',
         LocalTime:'',
         clientsId:[],
-        isTrue: true
+        isTrue: true,
+        searchKey: '',
+        nextP: this.$route.query.p,
+        currentPage: this.$route.query.p - 1,
+        itemsPerPage: 20,
+        resultCount: 0
 
       }
     },
     methods: {
+
+      setPage: function(pageNumber) {
+        this.currentPage = pageNumber
+        console.log("setPage " + this.currentPage)
+      },
       //Ф-ция сортировки по строковым полям
       sortArrayString: function (param) {
         let $this = this;
@@ -135,32 +168,23 @@
       },
 
       nextPage: function () {
-          this.elem+=this.countClientPage
-          if(this.elem > this.clients.length-this.countClientPage){
-            this.next = false
-          }
-          this.thisPageClient=[]
+        console.log(this.filters.length - this.itemsPerPage)
+        if((this.nextP + 2 )* this.itemsPerPage>this.filters.length - this.itemsPerPage){
+          this.next = false
+        }else {
           this.prev = true
-          for(let i = this.elem; i<this.clients.length;i++){
-
-            if(i<this.countClientPage+this.elem){
-              this.thisPageClient.push(this.clients[i])
-            }
-          }
+        }
+        console.log('CP: ' + this.currentPage)
       },
 
       prevPage: function () {
-          this.elem-=this.countClientPage
-          if(this.elem<=0){
-            this.prev = false
-            this.next = true
-          }
-          this.thisPageClient=[]
-          for(let i = this.elem; i<this.clients.length;i++){
-               if(i<this.countClientPage+this.elem){
-              this.thisPageClient.push(this.clients[i])
-            }
-          }
+        if(this.currentPage<=1){
+          this.prev = false
+        }else {
+          this.next = true
+        }
+        console.log('CP: ' + this.currentPage)
+
       },
 
       formatDateUTC: function (date) {
@@ -211,6 +235,7 @@
 
         this.$http.post('https://galvanize-cors-proxy.herokuapp.com/https://hidden-cliffs-66273.herokuapp.com/tz-frontend/man-load').then(function (res) {
           this.clients = res.data.result;
+          console.log(this.filters)
         }, function (error) {
           throw error
         })
@@ -222,10 +247,11 @@
 
     },
     computed:{
-      /*
-      /Фильтры
-       */
-      filter:function () {
+      totalPages: function() {
+        return Math.round(this.filters.length / this.itemsPerPage)
+      },
+
+      filters:function () {
         var $this = this;
         return this.clients.filter(function(client){
           if($this.LocalTime){
@@ -236,13 +262,30 @@
             String(client.last_ac = $this.formatDateUTC(new Date(client.last_active))).match($this.LocalTime)
           }
           return  client.name.match($this.searchName) &&
-                  String(client.id).match($this.searchID) &&
-                  String(client.online).match($this.searchOn) &&
-                  String(client.new).match($this.searchNew) &&
-                  String(client.is_payyer).match($this.searchPay)&&
-                  client.created_ac && client.last_ac
+            String(client.id).match($this.searchID) &&
+            String(client.online).match($this.searchOn) &&
+            String(client.new).match($this.searchNew) &&
+            String(client.is_payyer).match($this.searchPay)&&
+            client.created_ac && client.last_ac
         })
       },
+
+      paginatedUsers: function(){
+
+         if (this.currentPage <= this.totalPages) {
+          this.currentPage
+          console.log("pag: " + (this.currentPage + 1))
+        }
+
+        var index = this.currentPage * this.itemsPerPage
+        console.log("Index: " + index)
+        return this.filters.slice(index, index + this.itemsPerPage)
+      },
+
+      /*
+      /Фильтры
+       */
+
     }
   }
 </script>
