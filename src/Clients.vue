@@ -101,7 +101,7 @@
     watch: {
       '$route' (to) {
         this.currentPage = to.query.p - 1;
-        if((to.query.p - 1)* this.itemsPerPage>this.filters.length - this.itemsPerPage || this.filters.length<this.itemsPerPage ){
+        if((to.query.p - 1)* this.itemsPerPage>this.filter.length - this.itemsPerPage || this.filter.length<this.itemsPerPage ){
           this.next = false
         }else {
           this.next = true
@@ -119,11 +119,6 @@
     data: function () {
       return {
         clients:[],
-        count:20,
-        countPage:[],
-        countClientPage:10,
-        thisPageClient:[],
-        elem:0,
         prev:false,
         next: true,
         searchID:'',
@@ -139,7 +134,6 @@
         currentPage: this.$route.query.p - 1,
         itemsPerPage: 20,
         resultCount: 0,
-        filtersA:[]
 
       }
     },
@@ -164,9 +158,8 @@
         });
         $this.isTrue = !$this.isTrue;
       },
-
+      // Форматироване даты в UTC
       formatDateUTC: function (date) {
-
         var dd = date.getUTCDate();
         if (dd < 10) dd = '0' + dd;
 
@@ -186,9 +179,8 @@
 
         return dd + '.' + mm + '.' + yyyy +', '+ hh+':'+ MM +':' +ss;
       },
-
+      // Форматироване даты в Local Time
       formatDate: function (date) {
-
         var dd = date.getDate();
         if (dd < 10) dd = '0' + dd;
 
@@ -210,7 +202,7 @@
       },
 
       load: function () {
-
+        // Получение списка клиентов
         this.$http.post('https://galvanize-cors-proxy.herokuapp.com/https://hidden-cliffs-66273.herokuapp.com/tz-frontend/man-load').then(function (res) {
           this.clients = res.data.result;
         }, function (error) {
@@ -224,15 +216,16 @@
 
     },
     computed:{
+      // Получение общего количества страниц
       totalPages: function() {
-        return Math.round(this.filters.length / this.itemsPerPage)
+        return Math.round(this.filter.length / this.itemsPerPage)
       },
       /*
       /Фильтры
        */
-      filters:function () {
+      filter:function () {
         var $this = this;
-        return this.filters = this.clients.filter(function(client){
+        return this.clients.filter(function(client){
           if($this.LocalTime){
             String(client.created_ac = $this.formatDate(new Date(client.created_at))).match($this.LocalTime);
             String(client.last_ac = $this.formatDate(new Date(client.last_active))).match($this.LocalTime)
@@ -248,7 +241,7 @@
             client.created_ac && client.last_ac
         })
       },
-
+      // Пагинация
       paginatedUsers: function(){
 
          if (this.currentPage <= this.totalPages) {
@@ -256,7 +249,7 @@
         }
 
         var index = this.currentPage * this.itemsPerPage;
-        return this.filters.slice(index, index + this.itemsPerPage)
+        return this.filter.slice(index, index + this.itemsPerPage)
       },
 
 
